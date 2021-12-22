@@ -4,10 +4,10 @@ pragma solidity >=0.6.0 <0.7.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+// import "@openzeppelin/contracts/utils/Pausable.sol";
 import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
 
-contract LoansNFT is IERC721Receiver, Pausable {
+contract LoansNFT is IERC721Receiver {
 
     event LoansUpdated();
 
@@ -62,20 +62,13 @@ contract LoansNFT is IERC721Receiver, Pausable {
         return 0x150b7a02;
     }
 
-    function pauseLoans() public onlyManager {
-        _pause();
-    }
-
-    function unPauseLoans() public onlyManager {
-        _unpause();
-    }
 
     function createLoanRequest(address smartContractAddressOfNFT,
                                 uint tokenIdNFT,
                                 uint loanAmount,
                                 uint interestAmount,
                                 uint singlePeriodTime,
-                                uint maximumInterestPeriods) public whenNotPaused {
+                                uint maximumInterestPeriods) public {
         require(singlePeriodTime <= 31 days, "A single period can have a maximum of one month.");
         require(interestAmount < 2*loanAmount, "Interest must be lower than 2 * principal of the loan.");
         require(maximumInterestPeriods <= 12, "Maximum interest periods are 12.");
@@ -101,7 +94,7 @@ contract LoansNFT is IERC721Receiver, Pausable {
         emit LoansUpdated();
     }
 
-    function acceptLoanRequest(uint loanID) payable public isValidLoanID(loanID) whenNotPaused {
+    function acceptLoanRequest(uint loanID) payable public isValidLoanID(loanID) {
         require(allLoanRequests[loanID].status == Status.PENDING, "Status is not PENDING for loan.");
         require(allLoanRequests[loanID].borrower != msg.sender, "Invalid operation. You cannot underwrite your own loan.");
 
@@ -125,7 +118,7 @@ contract LoansNFT is IERC721Receiver, Pausable {
         emit LoansUpdated();
     }
 
-    function extendLoanRequest(uint loanID) payable public isValidLoanID(loanID) whenNotPaused {
+    function extendLoanRequest(uint loanID) payable public isValidLoanID(loanID) {
         require(allLoanRequests[loanID].status == Status.ACTIVE, "Status is not ACTIVE for loan");
         require(allLoanRequests[loanID].borrower == msg.sender, "Only the borrower can call this function.");
         require(allLoanRequests[loanID].maximumInterestPeriods > 0, "The maximum number of extensions to the loan has been reached.");
