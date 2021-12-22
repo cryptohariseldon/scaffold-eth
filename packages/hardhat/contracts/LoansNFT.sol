@@ -5,7 +5,7 @@ pragma solidity >=0.6.0 <0.7.0;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 // import "@openzeppelin/contracts/utils/Pausable.sol";
-import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
+import {SafeMath} from "SafeMath.sol";
 
 contract LoansNFT is IERC721Receiver {
 
